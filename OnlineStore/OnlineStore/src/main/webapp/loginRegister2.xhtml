@@ -1,0 +1,123 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head></h:head>
+
+        <h:body>
+
+            <p:tabView style="
+                            margin-top:40px;
+                            margin-left:auto;
+                            margin-right:auto;
+                            width:75%;">
+
+                <p:tab title="Я новый покупатель">
+                    <h:form id="registerform">
+                        <p:panel style="width: 50%;  margin-left:0px;">
+                            <p:messages severity="info"/>
+                            <h:panelGrid id="grid" columns="2" cellpadding="10">
+
+                                <h:outputLabel for="name" value="Имя и фамилия:"/>
+                                <p:inputText
+                                        id="name"
+                                        value="#{registerBean.name}"
+                                        label="Name"
+                                        required="true"
+                                        requiredMessage="Введите имя и фамилию"
+                                        validatorMessage="Имя и фамилия должны содержать не менее 2 символов без цифр">
+                                    <f:validateRegex pattern="^[A-ЯЁ][а-яё]+\s[A-ЯЁ][а-яё]+$"/>
+                                    <p:message for="name"/>
+                                </p:inputText>
+
+                                <h:outputLabel for="email1" value="Эл. почта:"/>
+                                <p:inputText
+                                        id="email1"
+                                        required="true"
+                                        requiredMessage="Введите эл. почту"
+                                        value="#{registerBean.email}"
+                                        validatorMessage="Неправильный формат эл.почты"
+                                        binding="#{registerBean.component1}">
+                                    <f:validateRegex
+                                            pattern="^(|(([A-Za-z0-9]+_+)|([A-Za-z0-9]+\-+)|([A-Za-z0-9]+\.+)|([A-Za-z0-9]+\++))*[A-Za-z0-9]+@((\w+\-+)|(\w+\.))*\w{1,63}\.[a-zA-Z]{2,6})$"/>
+                                    <p:message for="email1" id="emailError1"/>
+                                </p:inputText>
+
+                                <h:outputLabel for="password1" value="Пароль:"/>
+                                <p:password value="#{registerBean.password}"
+                                            id="password1"
+                                            required="true"
+                                            requiredMessage="Введите пароль"
+                                            validatorMessage="Длина пароля не менее 6 символов без пробелов и спец. символов">
+                                    <f:validateRegex pattern="^[A-Za-z0-9_-]{6,18}$"/>
+                                    <p:message for="password1"/>
+                                </p:password>
+
+                                <h:outputLabel for="phone" value="Мобильный телефон:"/>
+                                <p:inputMask value="#{registerBean.phone}" mask="(099) 999-9999"
+                                             id="phone"
+                                             required="true"
+                                             requiredMessage="Введите номер мобильного телефона"
+                                             validatorMessage="Неверный формат номера"
+                                             binding="#{registerBean.component2}">
+                                    <f:validateRegex
+                                            pattern="^\(0(96|97|98|67|68|50|95|99|66|63|93|73){1}\)\s[0-9]{3}-[0-9]{4}$"/>
+                                    <p:message for="phone"/>
+                                </p:inputMask>
+
+                                <h:outputText></h:outputText>
+                                <p:commandButton id="regButton"
+                                                 value="Зарегистрироваться"
+                                                 update="registerform"
+                                                 style="float:none"
+                                                 action="#{registerBean.register}"
+                                                 ajax="true"
+                                                 validateClient="true"/>
+                            </h:panelGrid>
+                        </p:panel>
+                    </h:form>
+                </p:tab>
+
+                <p:tab title="Я постоянный клиент">
+                    <h:form id="authform">
+                        <p:panel id="panel" style="border-style: none;">
+                            <p:messages id="auth" style="font-size: 90%"/>
+                            <h:panelGrid columns="2" cellpadding="5">
+                                <h:outputLabel for="email2" value="Эл. почта:"/>
+                                <p:inputText
+                                        id="email2"
+                                        required="true"
+                                        requiredMessage="Введите эл. почту"
+                                        value="#{authBean.email}"
+                                >
+
+                                </p:inputText>
+
+                                <h:outputLabel for="password2" value="Пароль:"/>
+                                <p:password value="#{authBean.password}"
+                                            id="password2"
+                                            required="true"
+                                            requiredMessage="Введите пароль"/>
+                                <h:outputText></h:outputText>
+                                <p:commandButton id="loginButton"
+                                                 value="Войти"
+                                                 resetValues="true"
+                                                 style="float:none"
+                                                 action="#{authBean.authenticate()}"
+                                                 update="authform"
+                                                 ajax="true"
+
+                                />
+
+
+                            </h:panelGrid>
+                        </p:panel>
+                    </h:form>
+                </p:tab>
+            </p:tabView>
+
+        </h:body>
+    </f:view>
+</ui:composition>

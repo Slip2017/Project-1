@@ -1,0 +1,109 @@
+﻿CREATE DATABASE online_store
+CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+CREATE TABLE category(
+category_id SERIAL,
+name VARCHAR(30) NOT NULL UNIQUE,
+description TEXT,
+PRIMARY KEY(category_id))
+ENGINE InnoDB CHARACTER SET utf8;
+
+CREATE TABLE product(
+product_id SERIAL,
+is_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+name VARCHAR(30) NOT NULL,
+price DECIMAL(10,2) NOT NULL,
+quantity INT UNSIGNED NOT NULL,
+description TEXT,
+category_id BIGINT UNSIGNED NOT NULL,
+PRIMARY KEY(product_id),
+INDEX(category_id),
+FOREIGN KEY(category_id) REFERENCES category(category_id)ON DELETE RESTRICT ON UPDATE CASCADE)
+ENGINE InnoDB CHARACTER SET utf8;
+
+CREATE TABLE user(
+user_id SERIAL,
+name VARCHAR(30) NOT NULL,
+email VARCHAR(30) NOT NULL UNIQUE,
+password VARCHAR(32) NOT NULL,
+phone VARCHAR(15) NOT NULL UNIQUE,
+PRIMARY KEY(user_id))
+ENGINE InnoDB CHARACTER SET utf8;
+
+CREATE TABLE orders(
+order_id SERIAL,
+is_archive TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+order_status TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+date_time DATETIME NOT NULL,
+total_price DECIMAL(10,2) NOT NULL,
+delivery_address VARCHAR(30) NOT NULL,
+user_id BIGINT UNSIGNED NOT NULL,
+PRIMARY KEY(order_id),
+INDEX(user_id),
+FOREIGN KEY(user_id) REFERENCES user(user_id)ON DELETE RESTRICT ON UPDATE CASCADE)
+ENGINE InnoDB CHARACTER SET utf8;
+
+CREATE TABLE item(
+order_id BIGINT UNSIGNED NOT NULL,
+product_id BIGINT UNSIGNED NOT NULL,
+total_quantity INT UNSIGNED NOT NULL,
+PRIMARY KEY(order_id, product_id),
+FOREIGN KEY(order_id) REFERENCES orders(order_id)ON DELETE CASCADE ON UPDATE CASCADE,
+FOREIGN KEY(product_id) REFERENCES product(product_id) ON DELETE RESTRICT ON UPDATE  CASCADE)
+ENGINE InnoDB CHARACTER SET utf8;
+
+
+DELIMITER //
+CREATE TRIGGER `update_product1` AFTER UPDATE ON `item`
+ FOR EACH ROW 
+ BEGIN
+if NEW.total_quantity > OLD.total_quantity 
+	THEN
+		SET @diff = NEW.total_quantity - OLD.total_quantity ;
+		SET @id = NEW.product_id;
+		UPDATE product SET quantity = (quantity - @diff) WHERE product_id = @id;
+ELSEIF NEW.total_quantity < OLD.total_quantity 
+	THEN 
+		SET @diff = OLD.total_quantity - NEW.total_quantity;
+		SET @id = NEW.product_id;
+		UPDATE product SET quantity = (quantity + @diff) WHERE product_id = @id;
+END IF;
+END
+//
+
+CREATE TRIGGER update_product2 AFTER DELETE ON item
+ FOR EACH ROW 
+ BEGIN
+		SET @qty = OLD.total_quantity;
+		SET @id = OLD.product_id;
+		UPDATE product SET quantity = (quantity + @qty) WHERE product_id = @id;
+END
+//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER update_product3 AFTER INSERT ON item
+ FOR EACH ROW 
+ BEGIN
+		SET @qty = NEW.total_quantity;
+		SET @id = NEW.product_id;
+		UPDATE product SET quantity = (quantity - @qty) WHERE product_id = @id;
+END
+//
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

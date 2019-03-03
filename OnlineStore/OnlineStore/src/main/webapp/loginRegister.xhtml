@@ -1,0 +1,202 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <ui:param name="var" value="Home"/>
+        <h:head>
+            <style type='text/css'>
+
+                a:link {
+                    background-color: white;
+                    color: black;
+                }
+
+                a.active {
+                    background-color: #c8c8c8;
+                    width: 60px;
+                    border-radius: 10px;
+                    color: black;
+                    text-decoration: none;
+                }
+
+
+            </style>
+        </h:head>
+
+        <h:body>
+
+            <h:form>
+                <div style="position:absolute;
+                                     left: 230px;
+                                     top:20px">
+
+                    <p:commandLink onclick="activate(this);" ajax="true" value="Я новый покупатель"
+                                   actionListener="#{registerBean.setFlag(false)}" style="margin-right: 50px; "
+                                   update="registerform authform"/>
+
+                    <p:commandLink id="link2" onclick="activate(this);" ajax="true" update="registerform authform"
+                                   actionListener="#{registerBean.setFlag(true)}" value="Я постояный клиент"/>
+                </div>
+            </h:form>
+
+            <p:growl id="growl" severity="info"/>
+
+            <h:form id="registerform">
+                <p:panel id="panel1" rendered="#{!registerBean.flag}" style="width: 75%;
+                                                                            position:absolute;
+                                                                            left: 190px;
+                                                                            top:70px;
+                                                                            border-style: none">
+
+
+                    <h:panelGrid columns="2" cellpadding="5">
+
+                        <h:outputLabel for="name" value="Имя и фамилия:"/>
+                        <p:inputText
+                                id="name"
+                                value="#{registerBean.name}"
+                                label="Name"
+                                required="true"
+                                requiredMessage="Введите имя и фамилию"
+                                validatorMessage="Имя и фамилия должны содержать не менее 2 символов без цифр">
+                            <f:validateRegex pattern="^[A-ЯЁ][а-яё]+\s[A-ЯЁ][а-яё]+$"/>
+                            <p:message for="name" style="position:absolute;
+	                                                        top: 19px;
+	                                                        left: 480px;
+	                                                        font-size: 80%"/>
+                        </p:inputText>
+
+                        <h:outputLabel for="email1" value="Эл. почта:"/>
+                        <p:inputText
+                                id="email1"
+                                required="true"
+                                requiredMessage="Введите эл. почту"
+                                value="#{registerBean.email}"
+                                validatorMessage="Неправильный формат эл.почты"
+                        >
+                            <f:validateRegex
+                                    pattern="^(|(([A-Za-z0-9]+_+)|([A-Za-z0-9]+\-+)|([A-Za-z0-9]+\.+)|([A-Za-z0-9]+\++))*[A-Za-z0-9]+@((\w+\-+)|(\w+\.))*\w{1,63}\.[a-zA-Z]{2,6})$"/>
+                            <p:message id="email1msg" for="email1" style="position:absolute;
+	                                                                        top: 65px;
+	                                                                        left: 480px;
+	                                                                        font-size: 80%"/>
+                        </p:inputText>
+
+                        <h:outputLabel for="password1" value="Пароль:"/>
+                        <p:password value="#{registerBean.password}"
+                                    id="password1"
+                                    required="true"
+                                    requiredMessage="Введите пароль"
+                                    validatorMessage="Длина пароля не менее 6 символов без пробелов и спец. символов">
+                            <f:validateRegex pattern="^[A-Za-z0-9_-]{6,18}$"/>
+                            <p:message for="password1" style="position:absolute;
+	                                                                         top: 109px;
+	                                                                        left: 480px;
+	                                                                        font-size: 80%"/>
+                        </p:password>
+
+                        <h:outputLabel for="phone" value="Мобильный телефон:"/>
+                        <p:inputMask value="#{registerBean.phone}" mask="(099) 999-9999"
+                                     id="phone"
+                                     required="true"
+                                     requiredMessage="Введите номер мобильного телефона"
+                                     validatorMessage="Неверный формат номера"
+                                     binding="#{registerBean.component2}">
+                            <f:validateRegex
+                                    pattern="^\(0(96|97|98|67|68|50|95|99|66|63|93|73){1}\)\s[0-9]{3}-[0-9]{4}$"/>
+                            <p:message for="phone" style="position:absolute;
+	                                                      top: 150px;
+	                                                      left: 480px;
+	                                                      font-size: 80%"/>
+                        </p:inputMask>
+
+                        <h:outputText></h:outputText>
+                        <p:commandButton id="regButton"
+                                         value="Зарегистрироваться"
+                                         update="growl registerform authform"
+                                         style="float:none"
+                                         ajax="true"
+                                         action="#{registerBean.register}"
+                                         validateClient="true"
+                        >
+
+                        </p:commandButton>
+                    </h:panelGrid>
+                </p:panel>
+            </h:form>
+
+            <h:form id="authform">
+                <p:panel id="panel" rendered="#{registerBean.flag}" style="width: 65%;
+                                                                             position:absolute;
+                                                                             left: 240px;
+                                                                             top:70px;
+                                                                             border-style: none">
+                    <p:growl id="growl2" severity="info"/>
+                    <h:panelGrid columns="2" cellpadding="5">
+                        <h:outputLabel for="email2" value="Эл. почта:"/>
+                        <p:inputText
+                                id="email2"
+                                required="true"
+                                requiredMessage="Введите эл. почту"
+                                value="#{authBean.email}">
+                            <p:message for="email2" style="position:absolute;
+	                                                        top: 20px;
+	                                                        left: 375px;
+	                                                        font-size: 80%"/>
+                        </p:inputText>
+
+                        <h:outputLabel for="password2" value="Пароль:"/>
+                        <p:password value="#{authBean.password}"
+                                    id="password2"
+                                    required="true"
+                                    requiredMessage="Введите пароль">
+                            <p:message for="password2" style="position:absolute;
+	                                                        top: 65px;
+	                                                        left: 375px;
+	                                                        font-size: 80%"/>
+                        </p:password>
+
+                        <h:outputText></h:outputText>
+                        <p:commandButton id="loginButton"
+                                         value="Войти"
+                                         resetValues="true"
+                                         style="float:none"
+                                         action="#{authBean.authenticate()}"
+                                         update="authform"
+                                         ajax="true"/>
+
+
+                    </h:panelGrid>
+                </p:panel>
+
+            </h:form>
+
+            <script type="text/javascript">
+
+                function activate(a) {
+                    var aa = document.getElementsByTagName('a');
+                    for (i in aa) {
+                        if ((aa[i] != a) &amp;&amp; (aa[i].className == 'active')) {
+                            aa[i].className = '';
+                        }
+                    }
+                    a.className = 'active';
+
+                }
+
+                function fnc() {
+                    length = document.getElementById('registerform:regButton').value.length;
+                    if (length > 10) {
+                        $("#\\:link2").click();
+                        document.getElementById(':link2').value = "";
+                    }
+                }
+
+            </script>
+
+
+        </h:body>
+    </f:view>
+</ui:composition>

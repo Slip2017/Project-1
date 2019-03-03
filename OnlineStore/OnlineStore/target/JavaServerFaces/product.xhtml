@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<f:view contentType="text/html">
+    <f:metadata>
+        <f:viewParam name="id" value="#{productView.productId}"/>
+    </f:metadata>
+
+    <h:head> <title>#{productView.product.name} #{productView.product.description} </title>
+    </h:head>
+
+    <h:body>
+
+            <p:layout fullPage="true">
+
+                <p:layoutUnit position="north" size="150" collapsible="true">
+
+                </p:layoutUnit>
+
+                <p:layoutUnit position="center">
+                    <p:menubar  model="#{menuViewProduct.model}"/>
+
+                    <p:tabView >
+                        <p:tab title="Общее">
+                            <h:panelGrid columns="2" cellpadding="20">
+
+                                <h:outputText value="#{productView.product.name}"/>
+                                <h:outputText value="#{productView.product.price}"/>
+
+                                <h:form id="form">
+
+                                <p:commandButton value="Купить" ajax="true" update="form"
+                                                 actionListener="#{bucketTable.addProduct(productView.product)}"
+                                rendered="#{!bucketTable.containsItem(productView.product)}"/>
+
+                                <p:commandLink action="bucket?faces-redirect=true" value="Товар в корзине"
+                                               rendered="#{bucketTable.containsItem(productView.product)}"/>
+                                </h:form>
+
+                            </h:panelGrid>
+
+                        </p:tab>
+
+                        <p:tab title="Характеристики">
+                            <h:panelGrid columns="2" cellpadding="20">
+                                <h:outputText value="#{productView.product.description}"/>
+                            </h:panelGrid>
+                        </p:tab>
+
+                        <p:tab title="Фото">
+                            <h:panelGrid columns="2" cellpadding="20">
+                            </h:panelGrid>
+                        </p:tab>
+
+                        <p:tab title="Отзывы">
+                            <h:panelGrid columns="2" cellpadding="10">
+                            </h:panelGrid>
+                        </p:tab>
+
+                    </p:tabView>
+
+
+                </p:layoutUnit>
+
+            </p:layout>
+
+    </h:body>
+</f:view>
+</html>
