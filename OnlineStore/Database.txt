@@ -52,6 +52,12 @@ FOREIGN KEY(order_id) REFERENCES orders(order_id)ON DELETE CASCADE ON UPDATE CAS
 FOREIGN KEY(product_id) REFERENCES product(product_id) ON DELETE RESTRICT ON UPDATE  CASCADE)
 ENGINE InnoDB CHARACTER SET utf8;
 
+CREATE TABLE admin (
+   id int(11) NOT NULL AUTO_INCREMENT,
+   name varchar(45) NOT NULL,
+   password varchar(45) NOT NULL,
+   PRIMARY KEY (`id`)
+);
 
 DELIMITER //
 CREATE TRIGGER `update_product1` AFTER UPDATE ON `item`
